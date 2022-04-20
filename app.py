@@ -41,10 +41,10 @@ def add_user():
 
 
 @app.route('/<int:user_id>')
-def user_details(user_id, post_id):
+def user_details(user_id):
     """This route displays the user's details if clicked on the user home page"""
     user = User.query.get(user_id)
-    posts = Post.query.get(post_id)
+    posts = Post.query.filter(Post.user_id == User.id)
     return render_template('details.html', user = user, posts = posts)
 
 

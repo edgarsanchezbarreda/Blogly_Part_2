@@ -14,9 +14,13 @@
 
     <h2 class="display-5">Posts</h2>
     <ul>
+
         {% for post in posts %}
+        {% if posts.user_id == user.id %}
         <li>{{post.title}}</li>
+        {% endif %}
         {% endfor %}
+
     </ul>
 
     <a href="/">Go Back</a>
