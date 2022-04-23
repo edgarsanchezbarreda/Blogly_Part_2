@@ -42,6 +42,9 @@ class User(db.Model):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+    
+    def __repr__(self):
+        return f"<User {self.first_name} {self.last_name} {self.image_url}>"
 
 class Post(db.Model):
     __tablename__ = 'post'
@@ -74,3 +77,6 @@ class Post(db.Model):
     )
 
     u = db.relationship('User', backref = 'posts')
+
+    def __repr__(self):
+        return f"<Post {self.title} {self.content} {self.created_at} {self.user_id}>"

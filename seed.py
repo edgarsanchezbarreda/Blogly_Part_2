@@ -16,7 +16,7 @@ post_2 = Post(title = 'Hello everyone!', content = 'Hello everyone, I am new to 
 
 post_3 = Post(title = 'Any good restaurants?', content = 'I am new to this city does anyone know a good taco spot?', user_id = 3)
 
-post_4 = Post(title = 'What a game!', content = 'Last nights basketball game was incredible, it came down to the wire!', user_id = 1)
+post_4 = Post(title = 'What a game!', content = "Last night's basketball game was incredible, it came down to the wire!", user_id = 1)
 
 post_5 = Post(title = 'Books to read.', content = 'I am looking for a good book to read, any suggestions?', user_id = 2)
 

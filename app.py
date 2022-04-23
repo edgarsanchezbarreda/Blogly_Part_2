@@ -1,5 +1,6 @@
 """Blogly application."""
 
+from crypt import methods
 from email.policy import default
 from flask import Flask, request, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
@@ -40,22 +41,21 @@ def add_user():
     return redirect(f"/{new_user.id}")
 
 
-@app.route('/<int:user_id>')
+@app.route('/users/<int:user_id>')
 def user_details(user_id):
     """This route displays the user's details if clicked on the user home page"""
     user = User.query.get(user_id)
-    posts = Post.query.filter(Post.user_id == User.id)
-    return render_template('details.html', user = user, posts = posts)
+    return render_template('details.html', user = user)
 
 
-@app.route('/<int:user_id>/edit')
+@app.route('/users/<int:user_id>/edit')
 def edit_user(user_id):
     """This route takes us to the edit page where we can edit the name and image of the selected user."""
     user = User.query.get_or_404(user_id)
     return render_template('edit.html', user= user)
 
 
-@app.route('/<int:user_id>/edit', methods = ['POST'])
+@app.route('/users/<int:user_id>/edit', methods = ['POST'])
 def save_edit_user(user_id):
     """This route allows us to save whatever changes were made in the edit page to our database, and returns us to the homepage"""
     user = User.query.get_or_404(user_id)
@@ -70,7 +70,7 @@ def save_edit_user(user_id):
     return redirect('/')
 
 
-@app.route('/<int:user_id>/delete', methods = ['POST'])
+@app.route('/users/<int:user_id>/delete', methods = ['POST'])
 def delete_user(user_id):
     """This route allows us to delete a user completely from our database."""
     user = User.query.get_or_404(user_id)
@@ -79,3 +79,63 @@ def delete_user(user_id):
     db.session.commit()
 
     return redirect('/')
+
+
+@app.route('/users/<int:user_id>/posts/new_post')
+def add_post_page(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('new_post.html', user = user)
+
+@app.route('/users/<int:user_id>/posts/new_post', methods = ['POST'])
+def add_post(user_id):
+    # user = User.query.get_or_404(user_id)
+    title = request.form['title']
+    content = request.form['content']
+    user_id = user_id
+
+    new_post = Post(title = title, content = content, user_id = user_id)
+    db.session.add(new_post)
+    db.session.commit()
+    
+    return redirect(f"/users/{user_id}")
+
+
+@app.route('/posts/<int:post_id>')
+def show_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    user = User.query.get_or_404(post.user_id)
+
+    return render_template('show_post.html', post = post, user = user)
+
+
+@app.route('/posts/<int:post_id>/edit')
+def edit_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    user = User.query.get_or_404(post.user_id)
+    
+    return render_template('edit_post.html', post = post, user = user)
+
+
+@app.route('/posts/<int:post_id>/edit', methods = ['POST'])
+def submit_post_edit(post_id):
+    post = Post.query.get_or_404(post_id)
+    user = User.query.get_or_404(post.user_id)
+    
+    post.title = request.form['title']
+    post.content = request.form['content']
+    
+    db.session.add(post)
+    db.session.commit()
+
+    return redirect(f"/users/{user.id}")
+
+
+@app.route('/posts/<int:post_id>/delete', methods = ['POST'])
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    user = User.query.get_or_404(post.user_id)
+
+    db.session.delete(post)
+    db.session.commit()
+
+    return redirect(f"/users/{user.id}")
